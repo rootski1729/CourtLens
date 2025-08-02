@@ -348,7 +348,7 @@ const SearchForm = {
         
         this.setupFormValidation(form);
         this.setupLoadingModal();
-        this.loadFormOptions();
+        // this.loadFormOptions(); // Disabled - dropdowns are populated by server-side template
     },
     
     setupFormValidation: function(form) {

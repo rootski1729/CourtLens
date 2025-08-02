@@ -1,0 +1,280 @@
+/* Custom styles for CourtLens application */
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+}
+
+/* Feature Icons */
+.feature-icon {
+    transition: transform 0.3s ease;
+}
+
+.feature-icon:hover {
+    transform: scale(1.1);
+}
+
+/* CAPTCHA Styles */
+.captcha-container {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 2px dashed #dee2e6;
+}
+
+.captcha-image {
+    max-height: 60px;
+    border: 2px solid #007bff;
+    border-radius: 5px;
+    background: white;
+}
+
+.captcha-code {
+    font-family: 'Courier New', monospace;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #007bff;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    transform: perspective(500px) rotateX(10deg);
+    transition: transform 0.3s ease, text-shadow 0.3s ease;
+    display: inline-block;
+    padding: 10px 15px;
+    background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+}
+
+.captcha-code:hover {
+    transform: perspective(500px) rotateX(0deg) scale(1.05);
+    text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+}
+
+/* Card Enhancements */
+.card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* Loading Animation */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Progress Bar Animation */
+.progress-bar-animated {
+    animation: progress-bar-stripes 1s linear infinite;
+}
+
+@keyframes progress-bar-stripes {
+    0% { background-position: 1rem 0; }
+    100% { background-position: 0 0; }
+}
+
+/* Form Enhancements */
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+.was-validated .form-control:valid {
+    border-color: #28a745;
+}
+
+.was-validated .form-control:invalid {
+    border-color: #dc3545;
+}
+
+/* Button Enhancements */
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(45deg, #0056b3, #004085);
+}
+
+/* Badge Styles */
+.badge {
+    font-size: 0.75em;
+    padding: 0.375rem 0.75rem;
+}
+
+/* Table Enhancements */
+.table-hover tbody tr:hover {
+    background-color: rgba(0,123,255,0.05);
+}
+
+/* Footer Styles */
+footer {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-top: 3px solid #007bff;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+    
+    .hero-section .lead {
+        font-size: 1rem;
+    }
+    
+    .captcha-container {
+        text-align: center;
+    }
+    
+    .captcha-image {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Animation Classes */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-in {
+    animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+
+/* Toast Notifications */
+.toast {
+    z-index: 9999;
+}
+
+/* Search Results */
+.search-result-card {
+    border-left: 4px solid #007bff;
+}
+
+.search-result-card:hover {
+    border-left-color: #0056b3;
+}
+
+/* PDF Download Buttons */
+.btn-pdf {
+    background: linear-gradient(45deg, #dc3545, #c82333);
+    color: white;
+    border: none;
+}
+
+.btn-pdf:hover {
+    background: linear-gradient(45deg, #c82333, #a71e2a);
+    color: white;
+}
+
+/* Status Indicators */
+.status-success { color: #28a745; }
+.status-warning { color: #ffc107; }
+.status-danger { color: #dc3545; }
+.status-info { color: #17a2b8; }
+
+/* Loading States */
+.btn-loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.btn-loading::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    margin: auto;
+    border: 2px solid transparent;
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #007bff;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #0056b3;
+}
+
+/* Print Styles */
+@media print {
+    .no-print,
+    .btn,
+    .card-footer,
+    .navbar,
+    footer,
+    .modal {
+        display: none !important;
+    }
+    
+    .card {
+        border: 1px solid #000 !important;
+        box-shadow: none !important;
+        margin-bottom: 20px !important;
+        break-inside: avoid;
+    }
+    
+    .card-header {
+        background: #f8f9fa !important;
+        color: #000 !important;
+    }
+    
+    body {
+        background: white !important;
+    }
+    
+    .container {
+        max-width: none !important;
+        width: 100% !important;
+    }
+}

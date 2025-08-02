@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  courtlens:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - SECRET_KEY=change-this-in-production-super-secret-key-12345
+      - DATABASE_URL=sqlite:///courtlens.db
+      - TESSERACT_PATH=tesseract
+      - RATE_LIMIT_PER_HOUR=60
+    volumes:
+      - courtlens_data:/app/instance
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optional: Add PostgreSQL for production
+  # postgres:
+  #   image: postgres:15-alpine
+  #   environment:
+  #     POSTGRES_DB: courtlens
+  #     POSTGRES_USER: courtlens
+  #     POSTGRES_PASSWORD: change-this-password
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   restart: unless-stopped
+
+volumes:
+  courtlens_data:
+  # postgres_data:

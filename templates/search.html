@@ -1,0 +1,301 @@
+{% extends "base.html" %}
+
+{% block title %}Search Cases - CourtLens{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0">
+                    <i class="fas fa-search me-2"></i>Search Delhi High Court Cases
+                </h4>
+            </div>
+            
+            <div class="card-body">
+                <form method="POST" id="searchForm" class="needs-validation" novalidate>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="case_type" class="form-label">Case Type <span class="text-danger">*</span></label>
+                            <select class="form-select" id="case_type" name="case_type" required>
+                                <option value="">Select Case Type</option>
+                                {% if case_types %}
+                                    {% for case_type in case_types %}
+                                        <option value="{{ case_type }}">{{ case_type }}</option>
+                                    {% endfor %}
+                                {% else %}
+                                    <option value="civil">Civil</option>
+                                    <option value="criminal">Criminal</option>
+                                    <option value="writ">Writ Petition</option>
+                                    <option value="appeal">Appeal</option>
+                                {% endif %}
+                            </select>
+                            <div class="invalid-feedback">
+                                Please select a case type.
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="case_year" class="form-label">Case Year <span class="text-danger">*</span></label>
+                            <select class="form-select" id="case_year" name="case_year" required>
+                                <option value="">Select Year</option>
+                                {% if years %}
+                                    {% for year in years %}
+                                        <option value="{{ year }}">{{ year }}</option>
+                                    {% endfor %}
+                                {% else %}
+                                    {% for year in range(2020, 2026) %}
+                                        <option value="{{ year }}">{{ year }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                            <div class="invalid-feedback">
+                                Please select a case year.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="case_number" class="form-label">Case Number <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="case_number" name="case_number" 
+                               placeholder="Enter case number (e.g., 123, 456/2024)" required>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Enter the case number without any prefixes or suffixes
+                        </div>
+                        <div class="invalid-feedback">
+                            Please enter a case number.
+                        </div>
+                    </div>
+                    
+                    <!-- CAPTCHA Section -->
+                    <div class="mb-4">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="fas fa-shield-alt me-2"></i>Security Verification
+                                </h6>
+                                
+                                <div class="row align-items-center">
+                                    <div class="col-md-6">
+                                        <div class="captcha-container mb-3 mb-md-0">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <img id="captcha-image" src="/api/captcha" alt="CAPTCHA" 
+                                                     class="border rounded me-3" style="height: 50px;">
+                                                <div>
+                                                    <button type="button" class="btn btn-outline-secondary btn-sm me-2" 
+                                                            id="refresh-captcha" title="Refresh CAPTCHA">
+                                                        <i class="fas fa-sync-alt"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-info btn-sm" 
+                                                            id="play-audio" title="Play Audio CAPTCHA">
+                                                        <i class="fas fa-volume-up"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="text-muted small">
+                                                <i class="fas fa-robot me-1"></i>
+                                                CAPTCHA will be solved automatically. If it fails, you can enter it manually.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <label for="captcha_code" class="form-label">Manual CAPTCHA (Optional)</label>
+                                        <input type="text" class="form-control" id="captcha_code" name="captcha_code" 
+                                               placeholder="Enter CAPTCHA if auto-solve fails">
+                                        <div class="form-text">
+                                            Leave empty for automatic solving
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <audio id="captcha-audio" style="display: none;">
+                                    <source src="" type="audio/mpeg">
+                                    Your browser does not support the audio element.
+                                </audio>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="button" class="btn btn-outline-secondary me-md-2" onclick="resetForm()">
+                            <i class="fas fa-undo me-2"></i>Reset
+                        </button>
+                        <button type="submit" class="btn btn-primary" id="searchBtn">
+                            <i class="fas fa-search me-2"></i>Search Cases
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Modal -->
+<div class="modal fade" id="loadingModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center py-4">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h5 class="mb-2">Searching Court Records...</h5>
+                <p class="text-muted mb-0">
+                    <span id="loadingStep">Initializing search...</span>
+                </p>
+                <div class="progress mt-3" style="height: 6px;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                         role="progressbar" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Search Tips -->
+<div class="row mt-4">
+    <div class="col-lg-8 mx-auto">
+        <div class="card border-info">
+            <div class="card-header bg-info text-white">
+                <h6 class="card-title mb-0">
+                    <i class="fas fa-lightbulb me-2"></i>Search Tips
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Use exact case numbers without prefixes
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Select the correct case type and year
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                CAPTCHA is solved automatically
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2">
+                                <i class="fas fa-info text-info me-2"></i>
+                                Results include party names and dates
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-info text-info me-2"></i>
+                                PDF orders/judgments are downloadable
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-info text-info me-2"></i>
+                                All searches are logged and saved
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('searchForm');
+    const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+    const loadingStep = document.getElementById('loadingStep');
+    const progressBar = document.querySelector('.progress-bar');
+    
+    // Form validation
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        if (form.checkValidity()) {
+            submitForm();
+        }
+        
+        form.classList.add('was-validated');
+    });
+    
+    // Form submission with loading animation
+    function submitForm() {
+        loadingModal.show();
+        
+        // Simulate loading steps
+        const steps = [
+            { text: 'Connecting to Delhi High Court...', progress: 20 },
+            { text: 'Extracting security tokens...', progress: 40 },
+            { text: 'Solving CAPTCHA automatically...', progress: 60 },
+            { text: 'Submitting search query...', progress: 80 },
+            { text: 'Processing results...', progress: 95 }
+        ];
+        
+        let currentStep = 0;
+        const stepInterval = setInterval(() => {
+            if (currentStep < steps.length) {
+                loadingStep.textContent = steps[currentStep].text;
+                progressBar.style.width = steps[currentStep].progress + '%';
+                currentStep++;
+            } else {
+                clearInterval(stepInterval);
+                // Submit the actual form
+                setTimeout(() => {
+                    form.submit();
+                }, 1000);
+            }
+        }, 800);
+    }
+    
+    // CAPTCHA refresh
+    document.getElementById('refresh-captcha').addEventListener('click', function() {
+        const img = document.getElementById('captcha-image');
+        img.src = '/api/captcha?' + new Date().getTime();
+        document.getElementById('captcha_code').value = '';
+    });
+    
+    // Audio CAPTCHA
+    document.getElementById('play-audio').addEventListener('click', function() {
+        fetch('/api/captcha')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.captcha.audio_url) {
+                    const audio = document.getElementById('captcha-audio');
+                    audio.src = data.captcha.audio_url;
+                    audio.play();
+                }
+            })
+            .catch(error => {
+                console.error('Error playing audio CAPTCHA:', error);
+            });
+    });
+    
+    // Auto-refresh CAPTCHA periodically
+    setInterval(() => {
+        document.getElementById('refresh-captcha').click();
+    }, 300000); // Refresh every 5 minutes
+});
+
+function resetForm() {
+    document.getElementById('searchForm').reset();
+    document.getElementById('searchForm').classList.remove('was-validated');
+    document.getElementById('refresh-captcha').click();
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.key === 'Enter') {
+        document.getElementById('searchBtn').click();
+    }
+    if (e.key === 'F5' && e.target.id === 'captcha-image') {
+        e.preventDefault();
+        document.getElementById('refresh-captcha').click();
+    }
+});
+</script>
+{% endblock %}

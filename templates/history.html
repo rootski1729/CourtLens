@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Search History - CourtLens{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-history me-2"></i>Search History
+                        </h5>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <span class="badge bg-light text-dark">
+                            Total: {{ searches.total }} searches
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-body">
+                {% if searches.items %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Search Parameters</th>
+                                <th>Status</th>
+                                <th>Results</th>
+                                <th>Error</th>
+                                <th>Timestamp</th>
+                                <th>IP Address</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for search in searches.items %}
+                            <tr>
+                                <td>
+                                    {% set params = search.search_params | fromjson %}
+                                    <div>
+                                        <span class="badge bg-primary me-1">{{ params.case_type }}</span>
+                                        <span class="text-muted">{{ params.case_number }}/{{ params.case_year }}</span>
+                                    </div>
+                                    {% if params.has_captcha %}
+                                        <small class="text-success">
+                                            <i class="fas fa-check me-1"></i>Manual CAPTCHA
+                                        </small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if search.success %}
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check me-1"></i>Success
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-danger">
+                                            <i class="fas fa-times me-1"></i>Failed
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if search.success %}
+                                        <span class="badge bg-info">{{ search.results_count }} cases</span>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if search.error_message %}
+                                        <small class="text-danger" title="{{ search.error_message }}">
+                                            {{ search.error_message[:50] }}{% if search.error_message|length > 50 %}...{% endif %}
+                                        </small>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <small class="text-muted">
+                                        {{ search.timestamp | formatdate('%Y-%m-%d %H:%M:%S') }}
+                                    </small>
+                                </td>
+                                <td>
+                                    <small class="text-muted font-monospace">
+                                        {{ search.ip_address }}
+                                    </small>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                {% if searches.pages > 1 %}
+                <nav aria-label="Search history pagination" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if searches.has_prev %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('search_history', page=searches.prev_num) }}">Previous</a>
+                            </li>
+                        {% endif %}
+                        
+                        {% for page_num in searches.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                            {% if page_num %}
+                                {% if page_num != searches.page %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ url_for('search_history', page=page_num) }}">{{ page_num }}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ page_num }}</span>
+                                    </li>
+                                {% endif %}
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">…</span>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if searches.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('search_history', page=searches.next_num) }}">Next</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+                
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-history fa-4x text-muted mb-4"></i>
+                    <h4 class="text-muted mb-3">No Search History</h4>
+                    <p class="text-muted">You haven't performed any searches yet.</p>
+                    <a href="{{ url_for('search_case') }}" class="btn btn-primary">
+                        <i class="fas fa-search me-2"></i>Start Searching
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

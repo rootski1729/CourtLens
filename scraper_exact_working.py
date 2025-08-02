@@ -56,7 +56,7 @@ class DelhiHighCourtScraper:
             "Criminal Revision Petition": "CRL.REV.P.",
             "Bail Application": "BAIL APPLN."
         }
-        self.years = {str(year): str(year) for year in range(2015, 2026)}
+        self.years = {str(year): str(year) for year in range(1998, 2026)}
     
     def get_session_data(self):
         try:

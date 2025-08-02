@@ -39,7 +39,6 @@ def formatdate_filter(value, format='%Y-%m-%d %H:%M'):
     except Exception:
         return str(value) if value else 'N/A'
 
-# Set up enhanced logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -53,7 +52,6 @@ logger = logging.getLogger(__name__)
 DATABASE_PATH = 'courtlens.db'
 
 def init_database():
-    """Initialize database with proper error handling"""
     try:
         conn = sqlite3.connect(DATABASE_PATH)
         cursor = conn.cursor()
@@ -74,8 +72,7 @@ def init_database():
                 pdf_links TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 raw_response TEXT
-            )
-        ''')
+            )''')
         
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS search_logs (
@@ -87,8 +84,7 @@ def init_database():
                 timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 ip_address TEXT,
                 user_agent TEXT
-            )
-        ''')
+            )''')
         
         cursor.execute("PRAGMA table_info(search_logs)")
         columns = [column[1] for column in cursor.fetchall()]
@@ -113,13 +109,11 @@ def init_database():
         logger.error(f"Database initialization error: {e}")
         raise
 
-# Initialize scraper with enhanced configuration
 scraper_config = {
     'tesseract_path': os.getenv('TESSERACT_PATH', 'tesseract'),
     'save_raw': False
 }
 
-# Import the fixed scraper
 try:
     from scraper_exact_working import DelhiHighCourtScraper
     scraper = DelhiHighCourtScraper(scraper_config)
@@ -134,7 +128,6 @@ def get_db_connection():
     return conn
 
 def insert_case(case_data):
-    """Insert case data with better error handling"""
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -160,8 +153,7 @@ def insert_case(case_data):
             case_data.get('diary_number'),
             case_data.get('order_details'),
             case_data.get('order_link'),
-            json.dumps(case_data)
-        ))
+            json.dumps(case_data)))
         
         case_id = cursor.lastrowid
         conn.commit()
@@ -174,7 +166,6 @@ def insert_case(case_data):
         return None
 
 def insert_search_log(log_data):
-    """Insert search log with better error handling"""
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -207,7 +198,7 @@ def get_recent_searches(limit=10):
         
         cursor.execute('''
             SELECT search_params, success, results_count, error_message, 
-                   ip_address, user_agent, timestamp 
+                ip_address, user_agent, timestamp 
             FROM search_logs 
             ORDER BY timestamp DESC 
             LIMIT ?
@@ -226,7 +217,7 @@ def get_recent_searches(limit=10):
                 'ip_address': search[4],
                 'user_agent': search[5],
                 'timestamp': search[6]
-            })
+})
         
         return search_list
     except Exception as e:
@@ -290,7 +281,6 @@ def index():
 def search_case():
     if request.method == 'GET':
         try:
-            # For displaying the form, we can use the global scraper or create temp one
             temp_scraper = DelhiHighCourtScraper(scraper_config)
             case_types = temp_scraper.get_case_types()
             years = temp_scraper.get_years()
@@ -301,7 +291,6 @@ def search_case():
             return render_template('search.html', case_types=[], years=[])
     
     try:
-        # Create a FRESH scraper instance for each search to avoid session issues
         logger.info("Creating fresh scraper instance for new search...")
         fresh_scraper = DelhiHighCourtScraper(scraper_config)
         
@@ -310,7 +299,6 @@ def search_case():
         case_year = request.form.get('case_year', '').strip()
         captcha_code = request.form.get('captcha_code', '').strip()
         
-        # Enhanced case type mapping
         case_type_mapping = {
             'writ': 'W.P.(C)',
             'criminal': 'CRL.A.',
@@ -347,7 +335,6 @@ def search_case():
         
         logger.info(f"Starting search with fresh scraper: {search_params}")
         
-        # Perform search with the fresh scraper instance
         result = fresh_scraper.search_case(mapped_case_type, case_number, case_year)
         
         logger.info(f"Search result: {result}")
@@ -365,8 +352,8 @@ def search_case():
             })
             
             if is_network_issue:
-                flash(f"⚠️ Network Connection Issue: {error_msg}", 'error')
-                flash("💡 Troubleshooting Tips:", 'info')
+                flash(f"Network Connection Issue: {error_msg}", 'error')
+                flash("Troubleshooting Tips:", 'info')
                 flash("• Check your internet connection", 'info')
                 flash("• The Delhi High Court website may be temporarily down", 'info')
                 flash("• Try again in a few minutes", 'info')
@@ -408,14 +395,13 @@ def search_case():
         
         flash(f"Found {len(saved_cases)} case(s)", 'success')
         return render_template('results.html', 
-                             cases=saved_cases, 
-                             search_params=search_params,
-                             current_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+                            cases=saved_cases, 
+                            search_params=search_params,
+                            current_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         
     except Exception as e:
         logger.error(f"Search error: {e}")
         
-        # Log the failed search
         try:
             insert_search_log({
                 'search_params': {
@@ -429,7 +415,7 @@ def search_case():
                 'user_agent': request.headers.get('User-Agent', '')
             })
         except:
-            pass  # Don't fail on logging error
+            pass
         
         flash(f"An unexpected error occurred: {str(e)}", 'error')
         return redirect(url_for('search_case'))
@@ -461,7 +447,6 @@ def api_years():
 @app.route('/api/captcha')
 def api_captcha():
     try:
-        # Create a fresh scraper instance for CAPTCHA
         from scraper_exact_working import DelhiHighCourtScraper
         temp_scraper = DelhiHighCourtScraper()
         
@@ -506,7 +491,6 @@ def debug_info():
         })
     
     try:
-        # Test session data retrieval
         randomid, csrf_token = scraper.get_session_data(force_refresh=True)
         
         debug_info = {

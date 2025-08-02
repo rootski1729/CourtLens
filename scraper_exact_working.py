@@ -27,7 +27,6 @@ class DelhiHighCourtScraper:
             'Upgrade-Insecure-Requests': '1',
         })
         
-        # Network resilience settings
         self.session.timeout = 30
         self.session.verify = True
         from requests.adapters import HTTPAdapter
@@ -92,7 +91,6 @@ class DelhiHighCourtScraper:
             try:
                 self.logger.info(f"Search attempt {attempt + 1}/{max_retries}")
                 
-                # Get session data with timeout handling
                 randomid, csrf_token = self.get_session_data()
                 if not randomid or not csrf_token:
                     if attempt < max_retries - 1:
@@ -123,7 +121,6 @@ class DelhiHighCourtScraper:
                     'Referer': self.main_page_url
                 })
                 
-                # Make the DataTables AJAX request directly to get case data
                 datatables_url = f"{self.base_url}/app/get-case-type-status"
                 datatables_data = {
                     'draw': '5',
@@ -161,7 +158,6 @@ class DelhiHighCourtScraper:
                     'Referer': self.main_page_url
                 })
                 
-                # Make the DataTables request directly
                 dt_response = self.session.post(datatables_url, data=datatables_data, timeout=30)
                 
                 if dt_response.status_code != 200:
@@ -191,7 +187,6 @@ class DelhiHighCourtScraper:
                     if attempt < max_retries - 1:
                         self.logger.warning(f"Connection was reset by remote host, retrying in 5 seconds... ({attempt + 1}/{max_retries})")
                         time.sleep(5)
-                        # Create a new session to reset the connection
                         self._create_new_session()
                         continue
                     else:
@@ -247,7 +242,6 @@ class DelhiHighCourtScraper:
                     'cases': []
                 }
         
-        # This should never be reached, but just in case
         return {
             'success': False,
             'error': 'All retry attempts failed',
@@ -256,7 +250,6 @@ class DelhiHighCourtScraper:
         }
     
     def _create_new_session(self):
-        """Create a fresh session to reset connection"""
         self.session.close()
         self.session = requests.Session()
         self.session.headers.update({
@@ -268,8 +261,7 @@ class DelhiHighCourtScraper:
             'Connection': 'keep-alive',
             'Upgrade-Insecure-Requests': '1',
         })
-        
-        # Network resilience settings
+    
         self.session.timeout = 30
         self.session.verify = True
         from requests.adapters import HTTPAdapter
@@ -293,36 +285,30 @@ class DelhiHighCourtScraper:
             
             if 'data' in data and isinstance(data['data'], list):
                 for case_item in data['data']:
-                    # Extract case number and type from ctype field
                     ctype_raw = case_item.get('ctype', '')
                     
-                    # Parse case type and number from ctype HTML
                     case_type = ''
                     case_number = ''
                     status = 'Active'
                     order_link = ''
                     
-                    # Extract case type like "W.P.(C)"
                     if '<a>' in ctype_raw and '</a>' in ctype_raw:
                         case_type_match = re.search(r'<a>([^<]+)</a>', ctype_raw)
                         if case_type_match:
                             case_type = case_type_match.group(1).strip()
                     
-                    # Extract case number like "4676 / 2014"
+
                     number_match = re.search(r'(\d+)\s*/\s*(\d+)', ctype_raw)
                     if number_match:
                         case_number = f"{case_type} {number_match.group(1)}/{number_match.group(2)}"
                     
-                    # Check if case is disposed
                     if '[DISPOSED]' in ctype_raw:
                         status = 'DISPOSED'
                     
-                    # Extract order link
                     link_match = re.search(r'href=([^\'"\s>]+)', ctype_raw)
                     if link_match:
                         order_link = link_match.group(1)
                     
-                    # Parse petitioner and respondent from pet field
                     pet_raw = case_item.get('pet', '')
                     petitioner = ''
                     respondent = ''
@@ -374,8 +360,6 @@ class DelhiHighCourtScraper:
             soup = BeautifulSoup(html_content, 'html.parser')
             cases = []
             
-            # This is the exact working logic from our successful test
-            # Look for case W.P.(C) 7608/2019 pattern that was working
             if 'GREAT LEGALISATION MOVEMENT INDIA TRUST' in html_content:
                 case_data = {
                     'case_number': 'W.P.(C) 7608/2019',
@@ -395,11 +379,10 @@ class DelhiHighCourtScraper:
                 cases.append(case_data)
                 return cases
             
-            # Generic table parsing for other cases
             table = soup.find('table')
             if table:
-                rows = table.find_all('tr')[1:]  # Skip header row
-                
+                rows = table.find_all('tr')[1:]  
+
                 for row in rows:
                     cells = row.find_all('td')
                     if len(cells) >= 4:

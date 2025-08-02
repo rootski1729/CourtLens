@@ -1,35 +1,55 @@
 # CourtLens - Delhi High Court Case Search System
 
 ## Overview
-CourtLens is a web application that fetches case information from the Delhi High Court website. It provides a clean interface for searching cases and viewing results with proper session management and security handling.
+CourtLens is a comprehensive web application that fetches case information from the **Delhi High Court** (https://delhihighcourt.nic.in/). It provides a clean, user-friendly interface for searching cases and viewing detailed results with proper session management and security handling.
+
+## Court Chosen: Delhi High Court
+- **Target**: Delhi High Court (https://delhihighcourt.nic.in/)
+- **Reason**: Reliable API endpoint with consistent data structure
+- **CAPTCHA Strategy**: Automatic CSRF token extraction from JavaScript, session management with fresh tokens per request
 
 ## Features
-- **Case Search**: Search by case type, number, and year
-- **CSRF Protection**: Automatic token extraction and validation
-- **Session Management**: Proper cookie and session handling
-- **Case Details**: Complete case information including parties, advocates, and hearing dates
-- **Search History**: Track all searches with timestamps and results
-- **Error Handling**: User-friendly error messages and validation
+- **Simple UI**: Clean HTML form with dropdowns for Case Type, Case Number, Filing Year
+- **Backend Scraping**: Programmatic requests to Delhi High Court with CAPTCHA bypass
+- **Data Parsing**: Extracts parties' names, filing dates, next hearing dates, order/judgment links
+- **Database Storage**: SQLite logging of every query and raw response  
+- **PDF Downloads**: Links to order/judgment PDFs when available
+- **Error Handling**: User-friendly messages for invalid cases or site downtime
+- **Session Management**: Fresh scraper instances per search for reliability
 - **Rate Limiting**: API protection against excessive requests
 
 ## Tech Stack
 - **Backend**: Python Flask 3.0
-- **Database**: SQLite
-- **Web Scraping**: Requests + BeautifulSoup
+- **Database**: SQLite with proper schema
+- **Web Scraping**: Requests + BeautifulSoup with CSRF handling
 - **Frontend**: HTML5, CSS3, Bootstrap 5
-- **Security**: Flask-Limiter for rate limiting
+- **Security**: Flask-Limiter, CSRF token management
+
+## CAPTCHA Strategy
+1. **Session Initialization**: Fresh session with proper headers for each search
+2. **Token Extraction**: Automatic CSRF token extraction from JavaScript on main page
+3. **Dynamic Headers**: Proper User-Agent, Referer, and X-Requested-With headers
+4. **Cookie Management**: Automatic session cookie handling
+5. **Fresh Sessions**: New scraper instance per search to avoid stale sessions
 
 ## Quick Start
+
+### Prerequisites
+- Python 3.8+
+- Virtual environment (recommended)
 
 ### Installation
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/rootski1729/CourtLens.git
 cd CourtLens
 
 # Create virtual environment
 python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+# Windows:
+venv\Scripts\activate
+# Linux/Mac:
+source venv/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
@@ -40,6 +60,32 @@ python setup_db.py
 # Run the application
 python app_simple.py
 ```
+
+### Environment Variables (Optional)
+Create a `.env` file:
+```env
+SECRET_KEY=your-secret-key-here
+TESSERACT_PATH=tesseract  # For future OCR features
+DATABASE_PATH=courtlens.db
+```
+
+## Usage
+
+1. **Access**: Open http://localhost:5000 in your browser
+2. **Search**: Select Case Type, enter Case Number and Year
+3. **Results**: View parsed case details including:
+   - Parties' names (Petitioner/Respondent)
+   - Advocate details
+   - Filing and next hearing dates
+   - Order/judgment PDF links (when available)
+   - Case status and court number
+4. **Download**: Click PDF links to download orders/judgments
+5. **History**: View search history with timestamps
+
+## Sample Cases for Testing
+- **W.P.(C) 7608/2019**: GREAT LEGALISATION MOVEMENT INDIA TRUST vs UNION OF INDIA AND ORS.
+- **W.P.(C) 1234/2020**: Test various case numbers
+- **CRL.A. 100/2021**: Criminal appeals
 
 ## Project Structure
 ```

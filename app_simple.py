@@ -407,7 +407,10 @@ def search_case():
         })
         
         flash(f"Found {len(saved_cases)} case(s)", 'success')
-        return render_template('results.html', cases=saved_cases, search_params=search_params)
+        return render_template('results.html', 
+                             cases=saved_cases, 
+                             search_params=search_params,
+                             current_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         
     except Exception as e:
         logger.error(f"Search error: {e}")
@@ -458,10 +461,11 @@ def api_years():
 @app.route('/api/captcha')
 def api_captcha():
     try:
-        if not scraper:
-            return jsonify({'success': False, 'error': 'Scraper not available'}), 500
+        # Create a fresh scraper instance for CAPTCHA
+        from scraper_exact_working import DelhiHighCourtScraper
+        temp_scraper = DelhiHighCourtScraper()
         
-        captcha_info = scraper.get_captcha_info()
+        captcha_info = temp_scraper.get_captcha_info()
         if captcha_info and captcha_info.get('has_captcha'):
             return jsonify({'success': True, 'captcha_info': captcha_info})
         else:

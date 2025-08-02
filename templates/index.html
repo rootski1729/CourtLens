@@ -1,80 +1,143 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard - CourtLens{% endblock %}
+{% block title %}Premium Legal Research Dashboard - CourtLens{% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-12">
-        <div class="hero-section text-center py-5 mb-5 bg-gradient rounded">
+        <!-- Premium Hero Section -->
+        <div class="hero-section text-center py-5 mb-5">
             <div class="container">
-                <h1 class="display-4 text-white mb-3">
-                    <i class="fas fa-gavel me-3"></i>CourtLens
-                </h1>
-                <p class="lead text-white-50 mb-4">
-                    Delhi High Court Case Information Fetcher & Dashboard
-                </p>
-                
-                <!-- Quick Search Form -->
                 <div class="row justify-content-center">
-                    <div class="col-lg-8">
-                        <form action="{{ url_for('search_case') }}" method="POST" class="bg-white p-4 rounded shadow">
-                            <div class="row g-3">
-                                <div class="col-md-4">
-                                    <label for="case_type" class="form-label text-dark">Case Type</label>
-                                    <select class="form-select" id="case_type" name="case_type" required>
-                                        <option value="">Select Case Type</option>
-                                        <option value="civil">Civil</option>
-                                        <option value="criminal">Criminal</option>
-                                        <option value="writ">Writ Petition</option>
-                                        <option value="appeal">Appeal</option>
-                                        <option value="company">Company Petition</option>
-                                        <option value="arbitration">Arbitration</option>
-                                        <option value="contempt">Contempt</option>
-                                        <option value="execution">Execution</option>
-                                        <option value="misc">Miscellaneous</option>
-                                        <option value="review">Review Petition</option>
-                                        <option value="bail">Bail Application</option>
-                                        <option value="divorce">Divorce</option>
-                                        <option value="trademark">Trademark</option>
-                                        <option value="patent">Patent</option>
-                                        <option value="tax">Tax Matter</option>
-                                    </select>
+                    <div class="col-lg-10">
+                        <h1 class="display-3 text-white mb-4" style="font-family: var(--font-heading); font-weight: 800;">
+                            <i class="fas fa-balance-scale me-3" style="color: #d69e2e;"></i>
+                            Court<span style="color: #d69e2e;">Lens</span>
+                        </h1>
+                        <p class="lead text-white mb-5" style="font-size: 1.3rem; opacity: 0.9;">
+                            Premium Delhi High Court Legal Research Portal
+                            <br><small style="font-size: 1rem; opacity: 0.7;">Advanced Case Search & Data Analytics Platform</small>
+                        </p>
+                        
+                        <!-- Premium Quick Actions -->
+                        <div class="row g-4 mb-5">
+                            <div class="col-md-4">
+                                <div class="card border-0 bg-transparent text-white h-100">
+                                    <div class="card-body text-center">
+                                        <div class="feature-icon mb-3">
+                                            <i class="fas fa-search"></i>
+                                        </div>
+                                        <h5 class="fw-bold">Advanced Search</h5>
+                                        <p class="small opacity-75">Comprehensive case lookup with detailed filters</p>
+                                    </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <label for="case_number" class="form-label text-dark">Case Number</label>
-                                    <input type="text" class="form-control" id="case_number" name="case_number" 
-                                           placeholder="Enter case number" required>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card border-0 bg-transparent text-white h-100">
+                                    <div class="card-body text-center">
+                                        <div class="feature-icon mb-3">
+                                            <i class="fas fa-chart-line"></i>
+                                        </div>
+                                        <h5 class="fw-bold">Analytics</h5>
+                                        <p class="small opacity-75">Real-time insights and data visualization</p>
+                                    </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <label for="case_year" class="form-label text-dark">Year</label>
-                                    <select class="form-select" id="case_year" name="case_year" required>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card border-0 bg-transparent text-white h-100">
+                                    <div class="card-body text-center">
+                                        <div class="feature-icon mb-3">
+                                            <i class="fas fa-shield-alt"></i>
+                                        </div>
+                                        <h5 class="fw-bold">Secure Access</h5>
+                                        <p class="small opacity-75">Professional-grade security and compliance</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Premium CTA Buttons -->
+                        <div class="d-flex gap-3 justify-content-center flex-wrap">
+                            <a href="{{ url_for('search_case') }}" class="btn btn-primary btn-lg px-5 py-3 shadow-lg" 
+                               style="background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); border: none; transform: translateY(-2px); transition: all 0.3s ease;"
+                               onmouseover="this.style.transform='translateY(-4px) scale(1.05)'"
+                               onmouseout="this.style.transform='translateY(-2px) scale(1)'">
+                                <i class="fas fa-search me-2"></i>Search Delhi High Court Cases
+                            </a>
+                            <a href="{{ url_for('search_history') }}" class="btn btn-outline-light btn-lg px-5 py-3" 
+                               style="border-color: rgba(255,255,255,0.5); transition: all 0.3s ease;"
+                               onmouseover="this.style.backgroundColor='rgba(255,255,255,0.1)'"
+                               onmouseout="this.style.backgroundColor='transparent'">
+                                <i class="fas fa-history me-2"></i>View Search History
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Premium Features Section -->
+<div class="row section-padding">
+    <div class="col-12">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold" style="font-family: var(--font-heading); color: var(--primary-dark);">
+                Professional Legal Research Tools
+            </h2>
+            <p class="lead text-muted">Comprehensive suite for legal professionals and researchers</p>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    <!-- Feature Cards -->
+    <div class="col-lg-4">
+        <div class="card h-100 card-spacing">
+            <div class="card-body text-center p-4">
+                <div class="mb-4">
+                    <i class="fas fa-search-plus text-primary" style="font-size: 3rem;"></i>
+                </div>
+                <h5 class="fw-bold mb-3">Case Search & Discovery</h5>
+                <p class="text-muted mb-4">Search through Delhi High Court cases with advanced filters including case type, year, parties, and more.</p>
+                <a href="{{ url_for('search_case') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-right me-1"></i>Explore Cases
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card h-100 card-spacing">
+            <div class="card-body text-center p-4">
+                <div class="mb-4">
+                    <i class="fas fa-file-alt text-success" style="font-size: 3rem;"></i>
+                </div>
+                <h5 class="fw-bold mb-3">Document Access</h5>
+                <p class="text-muted mb-4">Direct access to court orders, judgments, and other legal documents with secure viewing capabilities.</p>
+                <button class="btn btn-outline-success" disabled>
+                    <i class="fas fa-download me-1"></i>Access Documents
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card h-100 card-spacing">
+            <div class="card-body text-center p-4">
+                <div class="mb-4">
+                    <i class="fas fa-history text-info" style="font-size: 3rem;"></i>
+                </div>
+                <h5 class="fw-bold mb-3">Search History & Analytics</h5>
+                <p class="text-muted mb-4">Track your research activities with detailed search history and performance analytics.</p>
+                <a href="{{ url_for('search_history') }}" class="btn btn-outline-info">
+                    <i class="fas fa-chart-bar me-1"></i>View Analytics
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
                                         <option value="">Select Year</option>
-                                        <option value="2025">2025</option>
-                                        <option value="2024">2024</option>
-                                        <option value="2023">2023</option>
-                                        <option value="2022">2022</option>
-                                        <option value="2021">2021</option>
-                                        <option value="2020">2020</option>
-                                        <option value="2019">2019</option>
-                                        <option value="2018">2018</option>
-                                        <option value="2017">2017</option>
-                                        <option value="2016">2016</option>
-                                        <option value="2015">2015</option>
-                                        <option value="2014">2014</option>
-                                        <option value="2013">2013</option>
-                                        <option value="2012">2012</option>
-                                        <option value="2011">2011</option>
-                                        <option value="2010">2010</option>
-                                        <option value="2009">2009</option>
-                                        <option value="2008">2008</option>
-                                        <option value="2007">2007</option>
-                                        <option value="2006">2006</option>
-                                        <option value="2005">2005</option>
-                                        <option value="2004">2004</option>
-                                        <option value="2003">2003</option>
-                                        <option value="2002">2002</option>
-                                        <option value="2001">2001</option>
-                                        <option value="2000">2000</option>
                                     </select>
                                 </div>
                                 <div class="col-12 text-center">
@@ -94,42 +157,53 @@
 <!-- Statistics Cards -->
 <div class="row mb-5">
     <div class="col-md-4">
-        <div class="card bg-primary text-white h-100">
+        <div class="card bg-gradient text-white h-100 shadow-lg" 
+             style="background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); cursor: pointer; transition: all 0.3s ease;"
+             onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 30px rgba(0,123,255,0.3)'"
+             onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.1)'"
+             onclick="window.location.href='{{ url_for('search_case') }}'">
             <div class="card-body d-flex align-items-center">
                 <div class="flex-grow-1">
-                    <h2 class="card-title h3 mb-0">{{ stats.total_searches }}</h2>
-                    <p class="card-text">Total Searches</p>
+                    <h2 class="card-title h3 mb-0 fw-bold">{{ stats.total_searches }}</h2>
+                    <p class="card-text opacity-90">Total Searches</p>
                 </div>
                 <div class="ms-3">
-                    <i class="fas fa-search fa-2x opacity-75"></i>
+                    <i class="fas fa-search fa-3x opacity-75"></i>
                 </div>
             </div>
         </div>
     </div>
     
     <div class="col-md-4">
-        <div class="card bg-success text-white h-100">
+        <div class="card bg-gradient text-white h-100 shadow-lg" 
+             style="background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%); cursor: pointer; transition: all 0.3s ease;"
+             onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 30px rgba(40,167,69,0.3)'"
+             onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.1)'"
+             onclick="window.location.href='{{ url_for('search_history') }}'">
             <div class="card-body d-flex align-items-center">
                 <div class="flex-grow-1">
-                    <h2 class="card-title h3 mb-0">{{ stats.successful_searches }}</h2>
-                    <p class="card-text">Successful Searches</p>
+                    <h2 class="card-title h3 mb-0 fw-bold">{{ stats.successful_searches }}</h2>
+                    <p class="card-text opacity-90">Successful Searches</p>
                 </div>
                 <div class="ms-3">
-                    <i class="fas fa-check-circle fa-2x opacity-75"></i>
+                    <i class="fas fa-check-circle fa-3x opacity-75"></i>
                 </div>
             </div>
         </div>
     </div>
     
     <div class="col-md-4">
-        <div class="card bg-info text-white h-100">
+        <div class="card bg-gradient text-white h-100 shadow-lg" 
+             style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); cursor: pointer; transition: all 0.3s ease;"
+             onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 30px rgba(23,162,184,0.3)'"
+             onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.1)'">
             <div class="card-body d-flex align-items-center">
                 <div class="flex-grow-1">
-                    <h2 class="card-title h3 mb-0">{{ stats.success_rate }}%</h2>
-                    <p class="card-text">Success Rate</p>
+                    <h2 class="card-title h3 mb-0 fw-bold">{{ stats.success_rate }}%</h2>
+                    <p class="card-text opacity-90">Success Rate</p>
                 </div>
                 <div class="ms-3">
-                    <i class="fas fa-chart-line fa-2x opacity-75"></i>
+                    <i class="fas fa-chart-line fa-3x opacity-75"></i>
                 </div>
             </div>
         </div>
@@ -229,9 +303,8 @@
                             {% for search in recent_searches %}
                             <tr>
                                 <td>
-                                    {% set params = search.search_params | fromjson %}
-                                    <span class="badge bg-secondary me-1">{{ params.case_type }}</span>
-                                    <span class="text-muted">{{ params.case_number }}/{{ params.case_year }}</span>
+                                    <span class="badge bg-secondary me-1">{{ search.search_params }}</span>
+                                    <span class="text-muted">Case Search</span>
                                 </td>
                                 <td>
                                     {% if search.success %}
@@ -253,7 +326,7 @@
                                 </td>
                                 <td>
                                     <small class="text-muted">
-                                        {{ search.timestamp | formatdate('%Y-%m-%d %H:%M') }}
+                                        {{ search.timestamp.strftime('%Y-%m-%d %H:%M') if search.timestamp else 'N/A' }}
                                     </small>
                                 </td>
                             </tr>

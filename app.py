@@ -115,7 +115,7 @@ scraper_config = {
 }
 
 try:
-    from scraper_exact_working import DelhiHighCourtScraper
+    from scraper import DelhiHighCourtScraper
     scraper = DelhiHighCourtScraper(scraper_config)
     logger.info("Scraper initialized successfully")
 except ImportError:
@@ -447,7 +447,7 @@ def api_years():
 @app.route('/api/captcha')
 def api_captcha():
     try:
-        from scraper_exact_working import DelhiHighCourtScraper
+        from scraper import DelhiHighCourtScraper
         temp_scraper = DelhiHighCourtScraper()
         
         captcha_info = temp_scraper.get_captcha_info()
